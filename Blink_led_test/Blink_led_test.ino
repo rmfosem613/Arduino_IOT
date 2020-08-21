@@ -20,7 +20,7 @@ void loop() {
     for (int k=0; k<3; k++) {  //일정한 속도로 켜짐
       digitalWrite(led[k], 1);
       delay(300);
-      digitalWrite(led[k], 0);
+      digitalWrite(led[k], a0);
     }
   
   for (int i=0; i<COUNT; i++) 
