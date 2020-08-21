@@ -14,7 +14,6 @@ void setup() {
 }
 
 void loop() {
-  static int j=30;
   // put your main code here, to run repeatedly:
 #define COUNT 5
   for (int i=0; i<COUNT; i++) 
