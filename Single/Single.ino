@@ -1,6 +1,6 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#define ONE_WIRE_BUS 17
+#define ONE_WIRE_BUS 19
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 DeviceAddress insideThermometer;
@@ -11,10 +11,10 @@ HardwareSerial dustport(1);  //(통신속도, UART모드, RX핀번호 5)
 
 #include <WiFi.h>
 #include <HTTPClient.h>
-const char* ssid     = "eduroam";
-const char* password = "";
+const char* ssid     = "Wifi";
+const char* password = "000000c2f4";
 //const char* host = "api.thingspeak.com";
-String url = "http://api.thingspeak.com/update?api_key=your_own_api_key";
+String url = "http://api.thingspeak.com/update?api_key=9J67244OR3G7X01D";
 static unsigned long mark;
 int dpm25,dpm10;
 
@@ -26,21 +26,21 @@ void got_dust(int _pm25, int _pm10) {
 }
 
 void send(float temp) {
-  HTTPClient http;
-  
+   HTTPClient http;
+   
     Serial.print("\nRequesting URL: ");
-  String s = url+"&field1="+String(temp) +"&field2="+ String(dpm25) +"&field3="+ String(dpm10);
+   String s = url+"&field1="+String(temp) +"&field2="+ String(dpm25) +"&field3="+ String(dpm10);
     Serial.println(s);
-  http.begin(s);
+   http.begin(s);
 
-  int httpCode = http.GET();
-  if(httpCode == HTTP_CODE_OK) {
-    String payload = http.getString();
-    Serial.println(payload);
-  }
-  http.end();
-  
-  
+   int httpCode = http.GET();
+   if(httpCode == HTTP_CODE_OK) {
+      String payload = http.getString();
+      Serial.println(payload);
+   }
+   http.end();
+   
+   
 /*
     WiFiClient client;
     const int httpPort = 80;
@@ -48,8 +48,10 @@ void send(float temp) {
         Serial.println("connection failed");
         return;
     }
+
     Serial.print("\nRequesting URL: ");
     Serial.println(url+String(temp));
+
     // This will send the request to the server
     client.print(String("GET ") + url+String(temp) + " HTTP/1.1\r\n" +
                  "Host: " + host + "\r\n" +
@@ -62,12 +64,13 @@ void send(float temp) {
             return;
         }
     }
+
     // Read all the lines of the reply from server and print them to Serial
     while(client.available()) {
         String line = client.readStringUntil('\r');
         Serial.print(line);
     }
-*/  
+*/   
 }
 
 void ticker() {
@@ -78,18 +81,18 @@ void ticker() {
 }
 
 void setup() {
-  Serial.begin(115200);
-  dustport.begin(9600, SERIAL_8N1, 5, 4);
-  sensors.begin();
-  Serial.print("Found ");
-  Serial.print(sensors.getDeviceCount(), DEC);
-  Serial.print("Device 0 Resolution: ");
-  Serial.print(sensors.getResolution(insideThermometer), DEC); 
-  Serial.println();
-  if (!sensors.getAddress(insideThermometer, 0)) 
-    Serial.println("Unable to find address for Device 0"); 
+   Serial.begin(115200);
+   dustport.begin(9600, SERIAL_8N1, 18, 4);
+   sensors.begin();
+   Serial.print("Found ");
+   Serial.print(sensors.getDeviceCount(), DEC);
+   Serial.print("Device 0 Resolution: ");
+   Serial.print(sensors.getResolution(insideThermometer), DEC); 
+   Serial.println();
+   if (!sensors.getAddress(insideThermometer, 0)) 
+      Serial.println("Unable to find address for Device 0"); 
 
-  WiFi.begin(ssid, password);
+   WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
@@ -105,10 +108,10 @@ void setup() {
 void loop() {
     if (millis() > mark) {
         mark = millis() + 20000;
-    ticker();
-  }
-    while (dustport.available() > 0) {
-    dust.do_char(dustport.read(), got_dust);
-    yield();
-    }
+      ticker();
+   }
+     while (dustport.available() > 0) {
+      dust.do_char(dustport.read(), got_dust);
+      yield();
+     }
 }
